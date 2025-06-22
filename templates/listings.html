@@ -7,17 +7,19 @@
 
 <div class="card-grid">
     {% for listing in listings.items %}
-        <div class="card">
-            <h3><a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">{{ listing.title }}</a></h3>
-            <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
-            <div class="listing-meta">
-                <span>🔋 {{ listing.power_amount }}kWh</span>
-                <span>📍 {{ listing.location }}</span>
-                <span>👤 {{ listing.seller.username }}</span>
-                <span>📅 {{ listing.created_at.strftime('%m/%d') }}</span>
+        <a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'">
+                <h3>{{ listing.title }}</h3>
+                <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+                <div class="listing-meta">
+                    <span>🔋 {{ listing.power_amount }}kWh</span>
+                    <span>📍 {{ listing.location }}</span>
+                    <span>👤 {{ listing.seller.username }}</span>
+                    <span>📅 {{ listing.created_at.strftime('%m/%d') }}</span>
+                </div>
+                <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
             </div>
-            <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
-        </div>
+        </a>
     {% else %}
         <p>現在出品はありません。</p>
     {% endfor %}

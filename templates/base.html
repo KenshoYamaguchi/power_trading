@@ -15,10 +15,8 @@
                 <nav>
                     <ul>
                         <li><a href="{{ url_for('main.listings') }}">電力出品</a></li>
-                        <li><a href="{{ url_for('main.requests') }}">買取リクエスト</a></li>
                         {% if current_user.is_authenticated %}
                             <li><a href="{{ url_for('main.new_listing') }}">出品する</a></li>
-                            <li><a href="{{ url_for('main.new_request') }}">リクエスト</a></li>
                         {% endif %}
                     </ul>
                 </nav>

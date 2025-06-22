@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
-from models import db, Listing, Request, Comment, Message, User
+from models import db, Listing, Request, Comment, Message, User, PurchaseRequest
 from utils import login_required_with_message
 
 main_bp = Blueprint('main', __name__)
@@ -111,7 +111,8 @@ def add_comment():
 def mypage():
     user_listings = Listing.query.filter_by(seller_id=current_user.id).order_by(Listing.created_at.desc()).all()
     user_requests = Request.query.filter_by(buyer_id=current_user.id).order_by(Request.created_at.desc()).all()
-    return render_template('mypage.html', listings=user_listings, requests=user_requests)
+    purchase_requests = PurchaseRequest.query.filter_by(seller_id=current_user.id).order_by(PurchaseRequest.created_at.desc()).all()
+    return render_template('mypage.html', listings=user_listings, requests=user_requests, purchase_requests=purchase_requests)
 
 @main_bp.route('/messages')
 @login_required_with_message
@@ -141,3 +142,82 @@ def send_message(user_id):
         return redirect(url_for('main.message_box'))
     
     return render_template('send_message.html', recipient=recipient)
+
+@main_bp.route('/user/<int:user_id>')
+def user_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    user_listings = Listing.query.filter_by(seller_id=user_id, is_active=True).order_by(Listing.created_at.desc()).all()
+    return render_template('user_profile.html', user=user, listings=user_listings)
+
+@main_bp.route('/purchase_request/<int:listing_id>', methods=['POST'])
+@login_required_with_message
+def send_purchase_request(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+    
+    if listing.seller_id == current_user.id:
+        flash('自分の出品にリクエストは送れません')
+        return redirect(url_for('main.listing_detail', id=listing_id))
+    
+    existing_request = PurchaseRequest.query.filter_by(
+        buyer_id=current_user.id,
+        listing_id=listing_id
+    ).first()
+    
+    if existing_request:
+        flash('既にこの出品にリクエストを送信済みです')
+        return redirect(url_for('main.listing_detail', id=listing_id))
+    
+    message = request.form.get('message', '')
+    
+    purchase_request = PurchaseRequest(
+        buyer_id=current_user.id,
+        seller_id=listing.seller_id,
+        listing_id=listing_id,
+        message=message
+    )
+    
+    db.session.add(purchase_request)
+    db.session.commit()
+    
+    flash('購入リクエストを送信しました')
+    return redirect(url_for('main.listing_detail', id=listing_id))
+
+@main_bp.route('/chat/<int:user_id>')
+@login_required_with_message
+def chat_room(user_id):
+    other_user = User.query.get_or_404(user_id)
+    
+    # Get conversation between current user and other user
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == user_id)) |
+        ((Message.sender_id == user_id) & (Message.receiver_id == current_user.id))
+    ).order_by(Message.created_at.asc()).all()
+    
+    # Mark messages as read
+    unread_messages = Message.query.filter_by(
+        sender_id=user_id,
+        receiver_id=current_user.id,
+        is_read=False
+    ).all()
+    
+    for msg in unread_messages:
+        msg.is_read = True
+    db.session.commit()
+    
+    return render_template('chat_room.html', other_user=other_user, messages=messages)
+
+@main_bp.route('/send_chat_message/<int:user_id>', methods=['POST'])
+@login_required_with_message
+def send_chat_message(user_id):
+    content = request.form['content']
+    
+    message = Message(
+        content=content,
+        sender_id=current_user.id,
+        receiver_id=user_id
+    )
+    
+    db.session.add(message)
+    db.session.commit()
+    
+    return redirect(url_for('main.chat_room', user_id=user_id))

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ other_user.username }}とのチャット - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem;">
+        <h2>{{ other_user.username }}とのチャット</h2>
+        <a href="{{ url_for('main.user_profile', user_id=other_user.id) }}" class="btn btn-secondary">プロフィールを見る</a>
+    </div>
+
+    <div id="chat-messages" style="height: 400px; overflow-y: auto; border: 1px solid #eee; padding: 1rem; margin-bottom: 1rem; background-color: #f9f9f9;">
+        {% for message in messages %}
+            <div style="margin-bottom: 1rem; {% if message.sender_id == current_user.id %}text-align: right;{% endif %}">
+                <div style="display: inline-block; max-width: 70%; padding: 0.5rem 1rem; border-radius: 18px; 
+                           {% if message.sender_id == current_user.id %}
+                               background-color: #ff4757; color: white;
+                           {% else %}
+                               background-color: white; border: 1px solid #ddd;
+                           {% endif %}">
+                    <p style="margin: 0;">{{ message.content }}</p>
+                    <small style="opacity: 0.7; font-size: 0.8rem;">
+                        {{ message.created_at.strftime('%m/%d %H:%M') }}
+                    </small>
+                </div>
+            </div>
+        {% else %}
+            <p style="text-align: center; color: #666;">まだメッセージはありません。最初のメッセージを送ってみましょう！</p>
+        {% endfor %}
+    </div>
+
+    <form method="POST" action="{{ url_for('main.send_chat_message', user_id=other_user.id) }}">
+        <div style="display: flex; gap: 1rem;">
+            <input type="text" name="content" class="form-control" placeholder="メッセージを入力..." required style="flex: 1;">
+            <button type="submit" class="btn btn-primary">送信</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Scroll to bottom of chat messages
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+</script>
+{% endblock %}

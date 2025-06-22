@@ -13,19 +13,21 @@
 <h2 class="section-title">あなたの出品</h2>
 <div class="card-grid">
     {% for listing in listings %}
-        <div class="card">
-            <h3><a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">{{ listing.title }}</a></h3>
-            <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
-            <div class="listing-meta">
-                <span>🔋 {{ listing.power_amount }}kWh</span>
-                <span>📍 {{ listing.location }}</span>
-                <span>📅 {{ listing.created_at.strftime('%m/%d') }}</span>
-                <span style="color: {% if listing.is_active %}green{% else %}red{% endif %};">
-                    {% if listing.is_active %}公開中{% else %}非公開{% endif %}
-                </span>
+        <a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'">
+                <h3>{{ listing.title }}</h3>
+                <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+                <div class="listing-meta">
+                    <span>🔋 {{ listing.power_amount }}kWh</span>
+                    <span>📍 {{ listing.location }}</span>
+                    <span>📅 {{ listing.created_at.strftime('%m/%d') }}</span>
+                    <span style="color: {% if listing.is_active %}green{% else %}red{% endif %};">
+                        {% if listing.is_active %}公開中{% else %}非公開{% endif %}
+                    </span>
+                </div>
+                <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
             </div>
-            <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
-        </div>
+        </a>
     {% else %}
         <p>まだ出品はありません。<a href="{{ url_for('main.new_listing') }}">新規出品を作成</a></p>
     {% endfor %}
@@ -49,6 +51,35 @@
         </div>
     {% else %}
         <p>まだ買取リクエストはありません。<a href="{{ url_for('main.new_request') }}">新規リクエストを作成</a></p>
+    {% endfor %}
+</div>
+
+<h2 class="section-title">購入リクエスト</h2>
+<div class="card-grid">
+    {% for purchase_request in purchase_requests %}
+        <div class="card">
+            <h3><a href="{{ url_for('main.listing_detail', id=purchase_request.listing_id) }}" style="text-decoration: none; color: inherit;">{{ purchase_request.listing.title }}</a></h3>
+            <div class="listing-meta">
+                <span>購入希望者: <strong><a href="{{ url_for('main.user_profile', user_id=purchase_request.buyer_id) }}" style="color: #ff4757; text-decoration: none;">{{ purchase_request.buyer.username }}</a></strong></span>
+                <span>📅 {{ purchase_request.created_at.strftime('%Y年%m月%d日 %H:%M') }}</span>
+                <span style="color: 
+                    {% if purchase_request.status == 'pending' %}orange
+                    {% elif purchase_request.status == 'accepted' %}green
+                    {% else %}red{% endif %};">
+                    {% if purchase_request.status == 'pending' %}待機中
+                    {% elif purchase_request.status == 'accepted' %}承認済み
+                    {% else %}拒否{% endif %}
+                </span>
+            </div>
+            {% if purchase_request.message %}
+                <p><strong>メッセージ:</strong> {{ purchase_request.message }}</p>
+            {% endif %}
+            <div style="margin-top: 1rem;">
+                <a href="{{ url_for('main.chat_room', user_id=purchase_request.buyer_id) }}" class="btn btn-primary">チャットで返信</a>
+            </div>
+        </div>
+    {% else %}
+        <p>購入リクエストはありません。</p>
     {% endfor %}
 </div>
 {% endblock %}

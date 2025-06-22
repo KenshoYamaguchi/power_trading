@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}のプロフィール - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1>{{ user.username }}</h1>
+            <p>登録日: {{ user.created_at.strftime('%Y年%m月%d日') }}</p>
+        </div>
+        {% if current_user.is_authenticated and current_user.id != user.id %}
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ url_for('main.chat_room', user_id=user.id) }}" class="btn btn-primary">💬 DM</a>
+                <a href="{{ url_for('main.send_message', user_id=user.id) }}" class="btn btn-secondary">メッセージ</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<h2 class="section-title">{{ user.username }}さんの出品</h2>
+<div class="card-grid">
+    {% for listing in listings %}
+        <a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'">
+                <h3>{{ listing.title }}</h3>
+                <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+                <div class="listing-meta">
+                    <span>🔋 {{ listing.power_amount }}kWh</span>
+                    <span>📍 {{ listing.location }}</span>
+                    <span>📅 {{ listing.created_at.strftime('%m/%d') }}</span>
+                </div>
+                <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
+            </div>
+        </a>
+    {% else %}
+        <p>まだ出品はありません。</p>
+    {% endfor %}
+</div>
+{% endblock %}

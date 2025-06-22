@@ -16,6 +16,8 @@ class User(UserMixin, db.Model):
     comments = db.relationship('Comment', backref='author', lazy=True)
     sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', backref='sender', lazy=True)
     received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', backref='receiver', lazy=True)
+    purchase_requests_sent = db.relationship('PurchaseRequest', foreign_keys='PurchaseRequest.buyer_id', backref='buyer', lazy=True)
+    purchase_requests_received = db.relationship('PurchaseRequest', foreign_keys='PurchaseRequest.seller_id', backref='seller', lazy=True)
 
 class Listing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +33,7 @@ class Listing(db.Model):
     
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comments = db.relationship('Comment', backref='listing', lazy=True, cascade='all, delete-orphan')
+    purchase_requests = db.relationship('PurchaseRequest', backref='listing', lazy=True, cascade='all, delete-orphan')
 
 class Request(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,3 +67,13 @@ class Message(db.Model):
     
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class PurchaseRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.Text)
+    status = db.Column(db.String(20), default='pending')  # pending, accepted, rejected
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    buyer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey('listing.id'), nullable=False)

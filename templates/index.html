@@ -7,7 +7,7 @@
     <div class="hero-buttons">
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('main.new_listing') }}" class="btn btn-success">電力を出品する</a>
-            <a href="{{ url_for('main.new_request') }}" class="btn btn-primary">買取リクエスト</a>
+            <a href="{{ url_for('main.listings') }}" class="btn btn-primary">出品を見る</a>
         {% else %}
             <a href="{{ url_for('auth.register') }}" class="btn btn-success">今すぐ始める</a>
             <a href="{{ url_for('main.listings') }}" class="btn btn-secondary">出品を見る</a>
@@ -21,48 +21,32 @@
         <div class="stat-label">出品中</div>
     </div>
     <div class="stat-item">
-        <div class="stat-number">{{ requests|length }}</div>
-        <div class="stat-label">買取リクエスト</div>
-    </div>
-    <div class="stat-item">
         <div class="stat-number">100+</div>
         <div class="stat-label">ユーザー</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">取引成立</div>
     </div>
 </div>
 
 <h2 class="section-title">最新の出品</h2>
 <div class="card-grid">
     {% for listing in listings %}
-        <div class="card">
-            <h3><a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">{{ listing.title }}</a></h3>
-            <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
-            <div class="listing-meta">
-                <span>🔋 {{ listing.power_amount }}kWh</span>
-                <span>📍 {{ listing.location }}</span>
-                <span>👤 {{ listing.seller.username }}</span>
+        <a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">
+            <div class="card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'">
+                <h3>{{ listing.title }}</h3>
+                <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+                <div class="listing-meta">
+                    <span>🔋 {{ listing.power_amount }}kWh</span>
+                    <span>📍 {{ listing.location }}</span>
+                    <span>👤 {{ listing.seller.username }}</span>
+                </div>
+                <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
             </div>
-            <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
-        </div>
+        </a>
     {% else %}
         <p>現在出品はありません。</p>
-    {% endfor %}
-</div>
-
-<h2 class="section-title">最新の買取リクエスト</h2>
-<div class="card-grid">
-    {% for request in requests %}
-        <div class="card">
-            <h3><a href="{{ url_for('main.request_detail', id=request.id) }}" style="text-decoration: none; color: inherit;">{{ request.title }}</a></h3>
-            <p>{{ request.description[:100] }}{% if request.description|length > 100 %}...{% endif %}</p>
-            <div class="listing-meta">
-                <span>🔋 {{ request.power_amount }}kWh</span>
-                <span>📍 {{ request.location }}</span>
-                <span>👤 {{ request.buyer.username }}</span>
-            </div>
-            <div class="price">最大 ¥{{ "%.2f"|format(request.max_price_per_kwh) }}/kWh</div>
-        </div>
-    {% else %}
-        <p>現在買取リクエストはありません。</p>
     {% endfor %}
 </div>
 {% endblock %}

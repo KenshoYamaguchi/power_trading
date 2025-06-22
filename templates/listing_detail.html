@@ -7,7 +7,7 @@
     <h1>{{ listing.title }}</h1>
     
     <div class="listing-meta">
-        <span>出品者: <strong>{{ listing.seller.username }}</strong></span>
+        <span>出品者: <strong><a href="{{ url_for('main.user_profile', user_id=listing.seller_id) }}" style="color: #ff4757; text-decoration: none;">{{ listing.seller.username }}</a></strong></span>
         <span>🔋 {{ listing.power_amount }}kWh</span>
         <span>📍 {{ listing.location }}</span>
         <span>📅 {{ listing.created_at.strftime('%Y年%m月%d日') }}</span>
@@ -29,6 +29,14 @@
     
     {% if current_user.is_authenticated and current_user.id != listing.seller_id %}
         <div style="margin: 2rem 0;">
+            <form method="POST" action="{{ url_for('main.send_purchase_request', listing_id=listing.id) }}" style="margin-bottom: 1rem;">
+                <div class="form-group">
+                    <label for="message">購入リクエストメッセージ（任意）</label>
+                    <textarea name="message" class="form-control" rows="3" 
+                              placeholder="出品者へのメッセージを入力してください..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">購入リクエストを送る</button>
+            </form>
             <a href="{{ url_for('main.send_message', user_id=listing.seller_id) }}" 
                class="btn btn-primary">出品者にメッセージを送る</a>
         </div>
