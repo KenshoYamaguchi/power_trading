@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}メッセージ送信 - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 2rem;">{{ recipient.username }}さんにメッセージを送る</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="content">メッセージ</label>
+                <textarea class="form-control" id="content" name="content" rows="6" 
+                          placeholder="メッセージを入力してください..." required></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">送信</button>
+                <a href="{{ url_for('main.message_box') }}" class="btn btn-secondary">キャンセル</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

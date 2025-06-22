@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <h1>電力売買プラットフォーム</h1>
+    <p>余った電力を売ったり、必要な電力を購入できるマーケットプレイス</p>
+    <div class="hero-buttons">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.new_listing') }}" class="btn btn-success">電力を出品する</a>
+            <a href="{{ url_for('main.new_request') }}" class="btn btn-primary">買取リクエスト</a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-success">今すぐ始める</a>
+            <a href="{{ url_for('main.listings') }}" class="btn btn-secondary">出品を見る</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="stats">
+    <div class="stat-item">
+        <div class="stat-number">{{ listings|length }}</div>
+        <div class="stat-label">出品中</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ requests|length }}</div>
+        <div class="stat-label">買取リクエスト</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">100+</div>
+        <div class="stat-label">ユーザー</div>
+    </div>
+</div>
+
+<h2 class="section-title">最新の出品</h2>
+<div class="card-grid">
+    {% for listing in listings %}
+        <div class="card">
+            <h3><a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">{{ listing.title }}</a></h3>
+            <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+            <div class="listing-meta">
+                <span>🔋 {{ listing.power_amount }}kWh</span>
+                <span>📍 {{ listing.location }}</span>
+                <span>👤 {{ listing.seller.username }}</span>
+            </div>
+            <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
+        </div>
+    {% else %}
+        <p>現在出品はありません。</p>
+    {% endfor %}
+</div>
+
+<h2 class="section-title">最新の買取リクエスト</h2>
+<div class="card-grid">
+    {% for request in requests %}
+        <div class="card">
+            <h3><a href="{{ url_for('main.request_detail', id=request.id) }}" style="text-decoration: none; color: inherit;">{{ request.title }}</a></h3>
+            <p>{{ request.description[:100] }}{% if request.description|length > 100 %}...{% endif %}</p>
+            <div class="listing-meta">
+                <span>🔋 {{ request.power_amount }}kWh</span>
+                <span>📍 {{ request.location }}</span>
+                <span>👤 {{ request.buyer.username }}</span>
+            </div>
+            <div class="price">最大 ¥{{ "%.2f"|format(request.max_price_per_kwh) }}/kWh</div>
+        </div>
+    {% else %}
+        <p>現在買取リクエストはありません。</p>
+    {% endfor %}
+</div>
+{% endblock %}

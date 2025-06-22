@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}メッセージ - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<h1 class="section-title">メッセージボックス</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <div>
+        <h2>受信メッセージ</h2>
+        {% for message in received_messages %}
+            <div class="card" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <strong>From: {{ message.sender.username }}</strong>
+                    <small>{{ message.created_at.strftime('%Y年%m月%d日 %H:%M') }}</small>
+                </div>
+                <p>{{ message.content }}</p>
+                <a href="{{ url_for('main.send_message', user_id=message.sender_id) }}" 
+                   class="btn btn-secondary" style="margin-top: 1rem;">返信</a>
+            </div>
+        {% else %}
+            <p>受信メッセージはありません。</p>
+        {% endfor %}
+    </div>
+    
+    <div>
+        <h2>送信メッセージ</h2>
+        {% for message in sent_messages %}
+            <div class="card" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <strong>To: {{ message.receiver.username }}</strong>
+                    <small>{{ message.created_at.strftime('%Y年%m月%d日 %H:%M') }}</small>
+                </div>
+                <p>{{ message.content }}</p>
+            </div>
+        {% else %}
+            <p>送信メッセージはありません。</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

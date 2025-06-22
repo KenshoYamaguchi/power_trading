@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}新規出品 - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card">
+        <h2 style="text-align: center; margin-bottom: 2rem;">電力を出品する</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">出品タイトル</label>
+                <input type="text" class="form-control" id="title" name="title" required 
+                       placeholder="例: 太陽光発電の余剰電力">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">詳細説明</label>
+                <textarea class="form-control" id="description" name="description" rows="4"
+                          placeholder="電力の詳細、発電方法、条件などを記載してください"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="power_amount">電力量 (kWh)</label>
+                <input type="number" class="form-control" id="power_amount" name="power_amount" 
+                       step="0.1" min="0.1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="price_per_kwh">価格 (円/kWh)</label>
+                <input type="number" class="form-control" id="price_per_kwh" name="price_per_kwh" 
+                       step="0.01" min="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">場所</label>
+                <input type="text" class="form-control" id="location" name="location" 
+                       placeholder="例: 東京都渋谷区">
+            </div>
+            
+            <div class="form-group">
+                <label for="available_from">利用開始日時</label>
+                <input type="datetime-local" class="form-control" id="available_from" name="available_from" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="available_until">利用終了日時</label>
+                <input type="datetime-local" class="form-control" id="available_until" name="available_until" required>
+            </div>
+            
+            <button type="submit" class="btn btn-success" style="width: 100%;">出品する</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

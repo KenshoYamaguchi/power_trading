@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ request.title }} - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ request.title }}</h1>
+    
+    <div class="listing-meta">
+        <span>買い手: <strong>{{ request.buyer.username }}</strong></span>
+        <span>🔋 {{ request.power_amount }}kWh</span>
+        <span>📍 {{ request.location }}</span>
+        <span>📅 {{ request.created_at.strftime('%Y年%m月%d日') }}</span>
+    </div>
+    
+    <div class="price" style="font-size: 2rem; margin: 1rem 0;">
+        最大 ¥{{ "%.2f"|format(request.max_price_per_kwh) }}/kWh
+    </div>
+    
+    <p><strong>必要期間:</strong> 
+        {{ request.needed_from.strftime('%Y年%m月%d日 %H:%M') }} 〜 
+        {{ request.needed_until.strftime('%Y年%m月%d日 %H:%M') }}
+    </p>
+    
+    <div style="margin: 2rem 0;">
+        <h3>詳細説明</h3>
+        <p>{{ request.description }}</p>
+    </div>
+    
+    {% if current_user.is_authenticated and current_user.id != request.buyer_id %}
+        <div style="margin: 2rem 0;">
+            <a href="{{ url_for('main.send_message', user_id=request.buyer_id) }}" 
+               class="btn btn-primary">買い手にメッセージを送る</a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="comment-section">
+    <h3>コメント</h3>
+    
+    {% if current_user.is_authenticated %}
+        <div class="card">
+            <form method="POST" action="{{ url_for('main.add_comment') }}">
+                <input type="hidden" name="request_id" value="{{ request.id }}">
+                <div class="form-group">
+                    <textarea name="content" class="form-control" rows="3" 
+                              placeholder="コメントを入力してください..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">コメントする</button>
+            </form>
+        </div>
+    {% else %}
+        <p><a href="{{ url_for('auth.login') }}">ログイン</a>してコメントを投稿できます。</p>
+    {% endif %}
+    
+    {% for comment in comments %}
+        <div class="comment">
+            <div class="comment-author">{{ comment.author.username }}</div>
+            <div class="comment-date">{{ comment.created_at.strftime('%Y年%m月%d日 %H:%M') }}</div>
+            <p>{{ comment.content }}</p>
+        </div>
+    {% else %}
+        <p>まだコメントはありません。</p>
+    {% endfor %}
+</div>
+{% endblock %}

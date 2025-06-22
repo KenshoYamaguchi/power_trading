@@ -1,0 +1,53 @@
+電力売買プラットフォームをつくりたい
+
+
+
+メルカリのようなインターフェースで、電力を売買できる。
+サイト内ではお金のやり取りはせず、マッチングのみ。
+ユーザーは自由に出品できる。
+買取リクエストも送ることができる。
+
+
+
+ログインしていなくても、サイトを見ることはできるが、出品・買取リクエストはできない構成にしたい。
+ログインをしている人にはダイレクトメッセージを送る機能も欲しい。
+掲示板の部分にはコメントもできるように。
+この辺の機能はメルカリをまねしてほしい
+
+
+
+
+power_trade_platform/
+│
+├── app.py                  # Flaskアプリのエントリポイント
+├── config.py               # 環境設定（DB、SECRET_KEYなど）
+├── requirements.txt        # 依存パッケージ
+│
+├── models.py               # User, Listing, Request, Comment, Message など
+├── routes.py               # 各機能のルーティング（Blueprintで分割可能）
+├── auth.py                 # ログイン・登録・認証処理
+├── utils.py                # 認証チェック、共通関数など
+│
+├── templates/              # HTMLテンプレート（Jinja2）
+│   ├── base.html
+│   ├── index.html
+│   ├── listing_detail.html
+│   ├── new_listing.html
+│   ├── new_request.html
+│   ├── login.html
+│   ├── register.html
+│   ├── message_box.html
+│   ├── mypage.html
+│   └── chat_room.html
+│
+├── static/                 # 静的ファイル
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+└── db/
+    └── schema.sql          # DB初期構造（必要に応じて）
+
+
+
+

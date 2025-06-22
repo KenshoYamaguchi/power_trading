@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}マイページ - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<h1 class="section-title">マイページ</h1>
+
+<div style="margin-bottom: 3rem;">
+    <h2>ようこそ、{{ current_user.username }}さん</h2>
+    <p>登録日: {{ current_user.created_at.strftime('%Y年%m月%d日') }}</p>
+</div>
+
+<h2 class="section-title">あなたの出品</h2>
+<div class="card-grid">
+    {% for listing in listings %}
+        <div class="card">
+            <h3><a href="{{ url_for('main.listing_detail', id=listing.id) }}" style="text-decoration: none; color: inherit;">{{ listing.title }}</a></h3>
+            <p>{{ listing.description[:100] }}{% if listing.description|length > 100 %}...{% endif %}</p>
+            <div class="listing-meta">
+                <span>🔋 {{ listing.power_amount }}kWh</span>
+                <span>📍 {{ listing.location }}</span>
+                <span>📅 {{ listing.created_at.strftime('%m/%d') }}</span>
+                <span style="color: {% if listing.is_active %}green{% else %}red{% endif %};">
+                    {% if listing.is_active %}公開中{% else %}非公開{% endif %}
+                </span>
+            </div>
+            <div class="price">¥{{ "%.2f"|format(listing.price_per_kwh) }}/kWh</div>
+        </div>
+    {% else %}
+        <p>まだ出品はありません。<a href="{{ url_for('main.new_listing') }}">新規出品を作成</a></p>
+    {% endfor %}
+</div>
+
+<h2 class="section-title">あなたの買取リクエスト</h2>
+<div class="card-grid">
+    {% for request in requests %}
+        <div class="card">
+            <h3><a href="{{ url_for('main.request_detail', id=request.id) }}" style="text-decoration: none; color: inherit;">{{ request.title }}</a></h3>
+            <p>{{ request.description[:100] }}{% if request.description|length > 100 %}...{% endif %}</p>
+            <div class="listing-meta">
+                <span>🔋 {{ request.power_amount }}kWh</span>
+                <span>📍 {{ request.location }}</span>
+                <span>📅 {{ request.created_at.strftime('%m/%d') }}</span>
+                <span style="color: {% if request.is_active %}green{% else %}red{% endif %};">
+                    {% if request.is_active %}公開中{% else %}非公開{% endif %}
+                </span>
+            </div>
+            <div class="price">最大 ¥{{ "%.2f"|format(request.max_price_per_kwh) }}/kWh</div>
+        </div>
+    {% else %}
+        <p>まだ買取リクエストはありません。<a href="{{ url_for('main.new_request') }}">新規リクエストを作成</a></p>
+    {% endfor %}
+</div>
+{% endblock %}

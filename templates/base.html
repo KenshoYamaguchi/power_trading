@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}電力売買プラットフォーム{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="{{ url_for('main.index') }}" class="logo">⚡ PowerTrade</a>
+                
+                <nav>
+                    <ul>
+                        <li><a href="{{ url_for('main.listings') }}">電力出品</a></li>
+                        <li><a href="{{ url_for('main.requests') }}">買取リクエスト</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('main.new_listing') }}">出品する</a></li>
+                            <li><a href="{{ url_for('main.new_request') }}">リクエスト</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                
+                <div class="user-menu">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('main.message_box') }}" class="btn btn-secondary">メッセージ</a>
+                        <a href="{{ url_for('main.mypage') }}" class="btn btn-secondary">マイページ</a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">ログアウト</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">ログイン</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">新規登録</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alerts">
+                        {% for message in messages %}
+                            <div class="alert alert-info">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 PowerTrade Platform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}買取リクエスト一覧 - 電力売買プラットフォーム{% endblock %}
+
+{% block content %}
+<h1 class="section-title">買取リクエスト一覧</h1>
+
+<div class="card-grid">
+    {% for request in requests.items %}
+        <div class="card">
+            <h3><a href="{{ url_for('main.request_detail', id=request.id) }}" style="text-decoration: none; color: inherit;">{{ request.title }}</a></h3>
+            <p>{{ request.description[:100] }}{% if request.description|length > 100 %}...{% endif %}</p>
+            <div class="listing-meta">
+                <span>🔋 {{ request.power_amount }}kWh</span>
+                <span>📍 {{ request.location }}</span>
+                <span>👤 {{ request.buyer.username }}</span>
+                <span>📅 {{ request.created_at.strftime('%m/%d') }}</span>
+            </div>
+            <div class="price">最大 ¥{{ "%.2f"|format(request.max_price_per_kwh) }}/kWh</div>
+        </div>
+    {% else %}
+        <p>現在買取リクエストはありません。</p>
+    {% endfor %}
+</div>
+
+{% if requests.pages > 1 %}
+    <div class="pagination">
+        {% if requests.has_prev %}
+            <a href="{{ url_for('main.requests', page=requests.prev_num) }}">&laquo; 前</a>
+        {% endif %}
+        
+        {% for page_num in requests.iter_pages() %}
+            {% if page_num %}
+                {% if page_num != requests.page %}
+                    <a href="{{ url_for('main.requests', page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                    <span class="current">{{ page_num }}</span>
+                {% endif %}
+            {% else %}
+                <span>...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if requests.has_next %}
+            <a href="{{ url_for('main.requests', page=requests.next_num) }}">次 &raquo;</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
