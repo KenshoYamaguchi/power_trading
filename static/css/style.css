@@ -18,7 +18,7 @@ body {
 }
 
 header {
-    background-color: #ff4757;
+    background-color: #4a90e2;
     color: white;
     padding: 1rem 0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -72,22 +72,22 @@ nav a:hover {
 }
 
 .btn-primary {
-    background-color: #3742fa;
+    background-color: #4a90e2;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #2f3542;
+    background-color: #357abd;
 }
 
 .btn-secondary {
     background-color: #ffffff;
-    color: #ff4757;
-    border: 1px solid #ff4757;
+    color: #4a90e2;
+    border: 1px solid #4a90e2;
 }
 
 .btn-secondary:hover {
-    background-color: #ff4757;
+    background-color: #4a90e2;
     color: white;
 }
 
@@ -146,7 +146,7 @@ main {
 }
 
 .card h3 {
-    color: #ff4757;
+    color: #4a90e2;
     margin-bottom: 1rem;
     font-size: 1.3rem;
 }
@@ -194,7 +194,7 @@ main {
 
 .form-control:focus {
     outline: none;
-    border-color: #ff4757;
+    border-color: #4a90e2;
 }
 
 .alerts {
@@ -223,7 +223,7 @@ main {
 .alert-info {
     background-color: #d1ecf1;
     color: #0c5460;
-    border-left-color: #3742fa;
+    border-left-color: #4a90e2;
 }
 
 .comment-section {
@@ -241,7 +241,7 @@ main {
 
 .comment-author {
     font-weight: bold;
-    color: #ff4757;
+    color: #4a90e2;
     margin-bottom: 0.5rem;
 }
 
@@ -268,15 +268,15 @@ main {
 }
 
 .pagination a:hover {
-    background-color: #ff4757;
+    background-color: #4a90e2;
     color: white;
-    border-color: #ff4757;
+    border-color: #4a90e2;
 }
 
 .pagination .current {
-    background-color: #ff4757;
+    background-color: #4a90e2;
     color: white;
-    border-color: #ff4757;
+    border-color: #4a90e2;
 }
 
 footer {
@@ -311,7 +311,7 @@ footer {
 .stat-number {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #ff4757;
+    color: #4a90e2;
 }
 
 .stat-label {
